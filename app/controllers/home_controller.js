@@ -21,9 +21,18 @@ exports.defineController = function(db, mongoose) {
 
       // User has a new session - place initial positioning
       if ( req.session.userID === undefined ) {
-        req.session.x = 0;
-        req.session.y = 0;
-        req.session.z = 0;
+        req.session.pos = {
+          x: 0,
+          y: 40,
+          z: 0
+        };
+        req.session.dir = {
+          x: 0,
+          y: 0,
+          z: 0
+        };
+        req.session.moving = false;
+        req.session.type = "rock";
         req.session.userID = req.sessionID;
       }
       
@@ -37,8 +46,8 @@ exports.defineController = function(db, mongoose) {
         
         // Look for current user
         for ( i = 0; len = docs.length, i < docs.length; i++) {
-          
-          if ( docs[i].session.userID === userID ) {
+          docs[i] = docs[i].session
+          if ( docs[i].userID === userID ) {
             userInst = docs[i];
             docs.splice(i, 1);
           }

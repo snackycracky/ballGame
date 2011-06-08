@@ -17,7 +17,8 @@ Game.Models.Player = Backbone.Model.extend({
 
 
   initialize: function() {
-    
+    // Set userID to id for searching
+    this.set({id: this.get("userID") });
   }
 
 });

@@ -4,10 +4,9 @@ script(type='text/javascript')
   data.players = !{players};
 
 script(type='text/javascript')
-  var socket = new io.Socket('localhost', { port: 3000 });
+  var socket = Game.socket = new io.Socket('localhost', { port: 3000 });
   socket.connect();
   socket.on('connect', function(){});
-  socket.on('message', function(){});
   socket.on('disconnect', function(){});
 
   Game.Controllers.App.initialize();

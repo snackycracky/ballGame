@@ -9,6 +9,9 @@ var
   mongoose = require('mongoose'),
   db = mongoose.connect('mongodb://localhost/ballGame'),
   mongooseStore = require('connect-mongodb'),
+  mongooseStoreInst = new mongooseStore({
+      url: 'mongodb://localhost/ballGame'
+  }),
   homeController = require('./app/controllers/home_controller.js').defineController(db, mongoose),
   modelController = require('./app/controllers/model_controller.js').defineController(db, mongoose),
   io = require('socket.io'),
@@ -24,9 +27,7 @@ app.configure(function(){
   app.use(express.cookieParser());
   app.use(express.session({ 
     secret: 'ballGamesareAwesome',
-    store: new mongooseStore({
-      url: 'mongodb://localhost/ballGame'
-    }), 
+    store: mongooseStoreInst, 
     cookie: { maxAge: 60000 }
   }));
   app.use(require('stylus').middleware({ src: __dirname + '/public' }));
@@ -55,8 +56,26 @@ app.get('/clientModels/*.*', modelController);
 // Socket.io
 
 socket = io.listen(app);
-socket.on('connection', function(client) { 
-  client.on('message', function(){}); 
+socket.on('connection', function(client) {
+  
+  // Look for client update messages
+  client.on('message', function(message){
+    var messageObj = JSON.parse(message);
+    
+    // Get session obj and update datastore
+    mongooseStoreInst.get(messageObj.userID, function(err, session){
+      if (session !== undefined) {
+        session.pos = messageObj.pos;
+        session.dir = messageObj.dir;
+        session.moving = messageObj.moving;
+        mongooseStoreInst.set(messageObj.userID, session);
+      }
+    });
+    
+    // Broadcast update to clients
+    client.broadcast(messageObj);
+    
+  }); 
   client.on('disconnect', function(){});
 });
 

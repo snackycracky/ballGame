@@ -6,9 +6,19 @@ exports.defineModel = function(db, mongoose) {
 
   // Schema  
   var User = new Schema({
-    x: { type: Number, index: true },
-    y: { type: Number, index: true },
-    z: { type: Number, index: true }
+    userID: { type: String, index: true},
+    pos: {
+      x: { type: Number, index: true },
+      y: { type: Number, index: true },
+      z: { type: Number, index: true }
+    },
+    dir: {
+      x: { type: Number, index: true },
+      y: { type: Number, index: true },
+      z: { type: Number, index: true }
+    },
+    moving: Boolean,
+    type: { type: String, index: true }
   });
 
   // Define model

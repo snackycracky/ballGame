@@ -18,7 +18,7 @@ Game.Views.App = Backbone.View.extend({
       playerModel,
       i, len, playerData;
     
-		_.bindAll( this, "update" );
+		_.bindAll( this, "update", "updatePlayers" );
 		
 		this.initLand();
 		
@@ -44,6 +44,9 @@ Game.Views.App = Backbone.View.extend({
       this.players.add(playerModel);
     }
     
+    // Initialize socket message listener
+    Game.socket.on('message', this.updatePlayers);
+    
 	},
 	
 	
@@ -52,9 +55,34 @@ Game.Views.App = Backbone.View.extend({
 	*/
   update: function() {
 		this.characterView.update();
+    this.players.each(function(player){
+      player.view.update();
+    });
 	},
 	
 	
+  /*
+    function updatePlayers
+    callback to socket.io message listener
+  */
+  updatePlayers: function(obj) {
+    // Update changed player model
+    var player = this.players.get(obj.userID);
+    
+    // New player
+    if ( player === undefined ) {
+      player = new Game.Models.Player(obj); 
+      player.view = new Game.Views.Player({
+        model: player
+      });
+      this.players.add(player);
+    } else {
+      player.set(obj);
+    }
+    
+  },
+  
+  
 	/*
 		function renderLand
 		Renders the landscape of the world and attaches to scene

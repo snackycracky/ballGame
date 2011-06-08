@@ -9,7 +9,7 @@ Game.Controllers.App = (function() {
 		nextGameTick = (new Date).getTime(),
 	
 		// Constants
-		FPS = 60,
+		FPS = 30,
 		MAX_FRAME_SKIP = 10,
 		SKIP_TICKS = 1000 / FPS;
 	
@@ -92,9 +92,9 @@ Game.Controllers.App = (function() {
           to prevent the situation where nextGameTick is so far ahead of our current update that we start
           running updates extremely fast
         */
-        if ( loops === MAX_FRAME_SKIP ) {
+        /*if ( loops === MAX_FRAME_SKIP ) {
           nextGameTick = (new Date).getTime();
-        }
+          }*/
 				
 				// Render our scene
 				renderer.render( this.scene, this.camera );

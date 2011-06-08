@@ -36,10 +36,11 @@ Game.Views.Player = Backbone.View.extend({
 		var 
 			dir;
 
-    var moving = this.model.get("moving");
+    // Update position to account for lag
+    this.setPosition( this.model.get("pos") );
+
     // First, check if player is moving
 		if ( this.model.get("moving") ) {
-      
       // Get direction of player 
 			dir = this.dirVec.copy( this.model.get("dir") );
 				
@@ -51,6 +52,11 @@ Game.Views.Player = Backbone.View.extend({
         y: this.sprite.position.y,
         z: this.sprite.position.z + this.speed * dir.z
       });
+      this.model.set({pos: {
+        x: this.sprite.position.x,
+        y: this.sprite.position.y,
+        z: this.sprite.position.z
+      }});
 			
 			// Texture animation
 			this.sprite.uvOffset.x += this.IMAGE_OFFSET;

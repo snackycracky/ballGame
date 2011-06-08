@@ -1,6 +1,7 @@
 Game.Views.Character = Game.Views.Player.extend({
 
   // Class variables
+  nServerTick: (new Date).getTime(),
 
   initialize: function() {
     Game.Views.Player.prototype.initialize.call(this);
@@ -47,6 +48,11 @@ Game.Views.Character = Game.Views.Player.extend({
 			camera.target.position.z += this.speed * this.dirVec.z;
     }
     
+    // Update finished - send update to server once a second
+    if ((new Date).getTime() > this.nServerTick) {
+      Game.socket.send(JSON.stringify(this.model));
+      this.nServerTick += 33;
+    }
 	},
   
   
