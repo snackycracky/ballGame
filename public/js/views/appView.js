@@ -35,7 +35,7 @@ Game.Views.App = Backbone.View.extend({
    
     for ( i = 0; len = playerData.length, i < len; i++ ) {
       // Create player model & view
-      playerModel = new Game.Models.Player(playerData[i].session);
+      playerModel = new Game.Models.Player(playerData[i]);
       playerModel.view = new Game.Views.Player({
         model: playerModel
       });

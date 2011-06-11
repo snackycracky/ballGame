@@ -47,16 +47,14 @@ exports.defineController = function(db, mongoose) {
       sessionModel.find({}, function(err, docs) {
         var i, len;
         
-        
+        console.log(docs);
         // Look for current user
         for ( i = 0; len = docs.length, i < docs.length; i++) {
           docs[i] = docs[i].session
-          if ( docs[i].userID === userID ) {
-            //userInst = docs[i];
+          if ( docs[i].userID === userID || docs[i].active === false) {
             docs.splice(i, 1);
-          } else if ( docs[i].active === false ) {
-            docs.splice(i, 1);
-          }
+            i--;
+          } 
                     
         }
           

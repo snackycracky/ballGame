@@ -69,6 +69,7 @@ socket.on('connection', function(client) {
     
     // Get session obj and update datastore
     mongooseStoreInst.get(messageObj.userID, function(err, session){
+      
       if (session !== undefined) {
         session.pos = messageObj.pos;
         session.dir = messageObj.dir;
