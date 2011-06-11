@@ -54,7 +54,7 @@ exports.defineController = function(db, mongoose) {
           if ( docs[i].userID === userID ) {
             //userInst = docs[i];
             docs.splice(i, 1);
-          } else if ( docs[i].active = false ) {
+          } else if ( docs[i].active === false ) {
             docs.splice(i, 1);
           }
                     
