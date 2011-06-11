@@ -16,7 +16,7 @@ Game.Views.Player = Backbone.View.extend({
 
   initialize: function() {
     
-    _.bindAll( this, "render", "setPosition", "update" );
+    _.bindAll( this, "render", "setPosition", "update", "removePlayer" );
   
     // attach top level options
     this.textureImage = this.typeTextureMap[ this.model.get("type") ];
@@ -110,5 +110,14 @@ Game.Views.Player = Backbone.View.extend({
 		this.sprite.position.set(spec.x, spec.y, spec.z);
 		this.sprite.boundingMesh.position.set(spec.x, spec.y, spec.z);
 	},
+  
+  
+  /*
+    function removePlayer
+  */
+  removePlayer: function() {
+    Game.Controllers.App.scene.removeChild( this.sprite.boundingMesh );
+    Game.Controllers.App.scene.removeChild( this.sprite );
+  }
 
 });

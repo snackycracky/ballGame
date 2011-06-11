@@ -73,6 +73,7 @@ socket.on('connection', function(client) {
         session.pos = messageObj.pos;
         session.dir = messageObj.dir;
         session.clientID = client.sessionId;
+        session.active = true;
         session.moving = messageObj.moving;
         mongooseStoreInst.set(messageObj.userID, session);
       }
@@ -82,11 +83,18 @@ socket.on('connection', function(client) {
     client.broadcast(messageObj);
     
   }); 
+  
+  // Handle disconnects
   client.on('disconnect', function(){
+    
+    // Update active status in db
     mongooseStoreInst.getCollection().findOne({ 'session.clientID': client.sessionId}, function(err, data) {
       if ( data !== undefined ) {
         data.session.active = false;
         mongooseStoreInst.set(data._id, data.session, function(err, data){});
+        
+        // Broadcast disconnect to clients
+        client.broadcast(data.session);
       }
     });
     

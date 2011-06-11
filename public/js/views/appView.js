@@ -76,7 +76,11 @@ Game.Views.App = Backbone.View.extend({
         model: player
       });
       this.players.add(player);
-    } else {
+    } else if ( obj.active === false ) {
+      player.view.removePlayer();
+      this.players.remove(player);
+    }
+    else {
       player.set(obj);
     }
     
