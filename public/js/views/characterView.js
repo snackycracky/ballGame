@@ -4,7 +4,18 @@ Game.Views.Character = Game.Views.Player.extend({
   nServerTick: (new Date).getTime(),
 
   initialize: function() {
+    var 
+      camera = Game.Controllers.App.camera,
+      pos = this.model.get("pos");
+    
+    // Create player
     Game.Views.Player.prototype.initialize.call(this);
+    
+    // Init camera pos
+    camera.position.x += pos.x;
+    camera.position.z += pos.z;
+    camera.target.position.x += pos.x;
+    camera.target.position.z += pos.z;
     
     _.bindAll( this, "moveCharacter", "update" );
   
