@@ -28,7 +28,7 @@ app.configure(function(){
   app.use(express.session({ 
     secret: 'ballGamesareAwesome',
     store: mongooseStoreInst, 
-    cookie: { maxAge: 60000 }
+    cookie: { maxAge: 60000 * 20 }
   }));
   app.use(require('stylus').middleware({ src: __dirname + '/public' }));
   app.use(app.router);
@@ -36,11 +36,16 @@ app.configure(function(){
 });
 
 app.configure('development', function(){
+  app.set('socketHost', 'localhost');
+  app.set('socketPort', '3000');
+  
   app.use(express.logger());
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure('production', function(){
+  app.set('socketHost', '50.19.253.147');
+  app.set('socketPort', '80');
   app.use(express.errorHandler()); 
 });
 
@@ -67,6 +72,7 @@ socket.on('connection', function(client) {
       if (session !== undefined) {
         session.pos = messageObj.pos;
         session.dir = messageObj.dir;
+        session.clientID = client.sessionId;
         session.moving = messageObj.moving;
         mongooseStoreInst.set(messageObj.userID, session);
       }
@@ -76,7 +82,15 @@ socket.on('connection', function(client) {
     client.broadcast(messageObj);
     
   }); 
-  client.on('disconnect', function(){});
+  client.on('disconnect', function(){
+    mongooseStoreInst.getCollection().findOne({ 'session.clientID': client.sessionId}, function(err, data) {
+      if ( data !== undefined ) {
+        data.session.active = false;
+        mongooseStoreInst.set(data._id, data.session, function(err, data){});
+      }
+    });
+    
+  });
 });
 
 // Start server

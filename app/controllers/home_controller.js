@@ -1,7 +1,8 @@
 var
   userModel = require('./../models/user.js'),
   sessionModel = require('./../models/session.js'),
-  ObjectID = require('mongodb').BSONNative.ObjectID;
+  ObjectID = require('mongodb').BSONNative.ObjectID,
+  app = require('./../../app.js');
 
 
 exports.defineController = function(db, mongoose) {
@@ -36,6 +37,9 @@ exports.defineController = function(db, mongoose) {
         req.session.userID = req.sessionID;
       }
       
+      // Make user active
+      req.session.active = true;
+      
       // Get userID as ObjectID
       userID = req.session.userID;
 
@@ -48,23 +52,23 @@ exports.defineController = function(db, mongoose) {
         for ( i = 0; len = docs.length, i < docs.length; i++) {
           docs[i] = docs[i].session
           if ( docs[i].userID === userID ) {
-            userInst = docs[i];
+            //userInst = docs[i];
+            docs.splice(i, 1);
+          } else if ( docs[i].active = false ) {
             docs.splice(i, 1);
           }
-          
+                    
         }
           
-        if ( userInst === undefined ) {
-          // Couldn't find user
-          userInst = req.session;
-        }
-        
+        userInst = req.session;  
         
         // Render page + JSON character data
         res.render("index", {
           "title": "Three.js - BallGame",
           "character": JSON.stringify(userInst),
-          "players": JSON.stringify(docs)
+          "players": JSON.stringify(docs),
+          'socketHost': app.set('socketHost'),
+          'socketPort': app.set('socketPort')
         });
       });
         

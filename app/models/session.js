@@ -7,7 +7,7 @@ exports.defineModel = function(db, mongoose) {
   // Schema  
   var Session = new Schema({
     session: {
-      userID: { type: String, index: true, get: getUserID },
+      userID: { type: String, index: true },
       x: { type: Number, index: true },
       y: { type: Number, index: true },
       z: { type: Number, index: true }
@@ -17,7 +17,7 @@ exports.defineModel = function(db, mongoose) {
   // We display this publicly. Don't want to give the full sessionID of every user to just anybody!
   function getUserID(uid) {
     // First 24 chars of userID is the UUID, rest is the hash
-    return uid.slice(0, 24);
+    return uid === undefined ? uid : uid.slice(0, 24);
   }
 
   // Define model
