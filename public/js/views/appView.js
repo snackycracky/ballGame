@@ -1,5 +1,6 @@
 Game.Views.App = Backbone.View.extend({
 	
+  TREE_IMAGE: "assets/tree_br_sprite.png",
   
 	events: {
 		"click": "clickWorld",
@@ -18,9 +19,10 @@ Game.Views.App = Backbone.View.extend({
       playerModel,
       i, len, playerData;
     
-		_.bindAll( this, "update", "updatePlayers" );
+		_.bindAll( this, "update", "updatePlayers", "initTrees" );
 		
 		this.initLand();
+    this.initTrees();
 		
     // init user's character
     characterModel = new Game.Models.Player(Game.data.character)
@@ -53,7 +55,7 @@ Game.Views.App = Backbone.View.extend({
 	/*
 		function update
 	*/
-  update: function() {
+  update: function() {   
 		this.characterView.update();
     this.players.each(function(player){
       player.view.update();
@@ -97,13 +99,13 @@ Game.Views.App = Backbone.View.extend({
 			plane,
 			uvs, i, j,
 			mesh;
-		
-		// Load texture
-		grass  = THREE.ImageUtils.loadTexture( "textures/grass.gif" );
-		grass.wrapT = grass.wrapS = THREE.RepeatWrapping;
 
+		// Load texture
+		grass  = THREE.ImageUtils.loadTexture( "textures/grass.png" );
+		grass.wrapT = grass.wrapS = THREE.RepeatWrapping;
+    
 		// Create plane
-		plane = new THREE.Plane(8, 8, 8, 8);
+		plane = new THREE.PlaneGeometry(64, 64, 64, 64);
 		plane.doubleSided = true;
 		
 		// Create plane texture mapping
@@ -113,8 +115,8 @@ Game.Views.App = Backbone.View.extend({
 
 			for ( j = 0; j < uvs.length; j ++ ) {
 
-				uvs[ j ].u *= 8;
-				uvs[ j ].v *= 8;
+				uvs[ j ].u *= 32;
+				uvs[ j ].v *= 32;
 
 			}
 		}
@@ -127,7 +129,37 @@ Game.Views.App = Backbone.View.extend({
 		// Add object to scene
 		Game.Controllers.App.scene.addObject( mesh );
 	},
-	
+  
+  
+  initTrees: function() {
+    var 
+			texture, i,
+
+		// Load sprite map
+		texture = THREE.ImageUtils.loadTexture( this.TREE_IMAGE );
+	  
+    for (var i = 0; i < 50; i++) {
+  
+  		// Create sprite
+  		this.treeSprite = new THREE.Sprite( { map: texture, 
+        useScreenCoordinates: false, 
+        affectedByDistance: true, 
+        scaleByViewport: true } );
+  		
+  		// Set scale to 1/24 of image (200px)
+  		this.treeSprite.scale.y = -1;
+  		this.treeSprite.scale.x = -1;
+  		// Add collision detection
+  		//this.sprite.boundingMesh = new THREE.Mesh( new THREE.Cube(60, 60, 60, 1, 1, 1) );
+  		//THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB(this.sprite.boundingMesh) );
+  
+  		// Position sprite
+  		this.treeSprite.position.set(-2250 + (750 * (i % 6)), 200 , 3750 - (750 * (i % 10)));
+  		
+  		Game.Controllers.App.scene.addObject( this.treeSprite );
+  		//Game.Controllers.App.scene.addObject( this.sprite.boundingMesh );
+    }
+  },
 	
 	/*
 		function clickWorld

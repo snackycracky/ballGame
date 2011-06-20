@@ -31,10 +31,10 @@ Game.Controllers.App = (function() {
 			// Initialize camera
 			this.camera = new THREE.Camera( 45, window.innerWidth / window.innerHeight, -2000, 10000 );
 			this.camera.projectionMatrix = THREE.Matrix4.makeOrtho( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, -2000, 10000 );
-			this.camera.position.y = 70.711;
+			this.camera.position.y = 81.64965;
 			this.camera.position.x = 100;
 			this.camera.position.z = 100;
-			
+   
 			// Create scene
 			this.scene = new THREE.Scene();
 			
@@ -92,9 +92,9 @@ Game.Controllers.App = (function() {
           to prevent the situation where nextGameTick is so far ahead of our current update that we start
           running updates extremely fast
         */
-        /*if ( loops === MAX_FRAME_SKIP ) {
+        if ( loops === MAX_FRAME_SKIP ) {
           nextGameTick = (new Date).getTime();
-          }*/
+        }
 				
 				// Render our scene
 				renderer.render( this.scene, this.camera );

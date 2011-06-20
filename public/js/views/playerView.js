@@ -79,23 +79,26 @@ Game.Views.Player = Backbone.View.extend({
 		texture = THREE.ImageUtils.loadTexture( this.textureImage );
 	
 		// Create sprite
-		this.sprite = new THREE.Sprite( { map: texture, useScreenCoordinates: false, affectedByDistance: false} );
+		this.sprite = new THREE.Sprite( { map: texture, 
+      useScreenCoordinates: false, 
+      affectedByDistance: true,
+      scaleByViewport: true
+    } );
 		
 		// Set scale to 1/24 of image (200px)
-		this.sprite.scale.y = .041667;
-		this.sprite.scale.x = -0.041167;
+		this.sprite.scale.y = -.041667 / 1.5;
+		this.sprite.scale.x = -0.041167 / 1.5;
 
 		// Set offset to first sprite of 24 images
 		this.sprite.uvOffset.x = .95834;
 		this.sprite.uvScale.x = 0.041167;
 		
 		// Add collision detection
-		this.sprite.boundingMesh = new THREE.Mesh( new THREE.Cube(60, 60, 60, 1, 1, 1) );
+		this.sprite.boundingMesh = new THREE.Mesh( new THREE.CubeGeometry(60, 60, 60, 1, 1, 1) );//, new THREE.MeshBasicMaterial( { wireframe: false } ) );
 		THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB(this.sprite.boundingMesh) );
 
 		// Center sprite at 0, 0, 0 of world
 		this.setPosition(this.model.get("pos"));
-		
 		
 		Game.Controllers.App.scene.addObject( this.sprite );
 		Game.Controllers.App.scene.addObject( this.sprite.boundingMesh );
