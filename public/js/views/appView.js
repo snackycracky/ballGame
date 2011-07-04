@@ -82,7 +82,6 @@ Game.Views.App = Backbone.View.extend({
       this.players.add(player);
     } else if ( obj.active === false ) {
       console.log("removing player");
-      console.log(player);
       player.view.removePlayer();
       this.players.remove(player);
     }
@@ -151,8 +150,8 @@ Game.Views.App = Backbone.View.extend({
         scaleByViewport: true } );
   		
   		// Set scale to 1/24 of image (200px)
-  		this.treeSprite.scale.y = -1;
-  		this.treeSprite.scale.x = -1;
+  		this.treeSprite.scale.y = 1;
+  		this.treeSprite.scale.x = 1;
   		// Add collision detection
   		//this.sprite.boundingMesh = new THREE.Mesh( new THREE.Cube(60, 60, 60, 1, 1, 1) );
   		//THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB(this.sprite.boundingMesh) );

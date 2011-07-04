@@ -99,7 +99,7 @@ Game.Views.Player = Backbone.View.extend({
     } );
 		
 		// Set scale to 1/24 of image (200px)
-		this.sprite.scale.y = -0.4;
+		this.sprite.scale.y = 0.4;
 		this.sprite.scale.x = .10;
 
 		// Set offset to first sprite of 24 images
@@ -137,7 +137,6 @@ Game.Views.Player = Backbone.View.extend({
   removePlayer: function() {
     Game.Controllers.App.scene.removeChild( this.sprite.boundingMesh );
     Game.Controllers.App.scene.removeChild( this.sprite );
-    console.log("removing from scene");
   }
 
 });
