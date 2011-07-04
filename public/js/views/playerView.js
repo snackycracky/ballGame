@@ -137,6 +137,7 @@ Game.Views.Player = Backbone.View.extend({
   removePlayer: function() {
     Game.Controllers.App.scene.removeChild( this.sprite.boundingMesh );
     Game.Controllers.App.scene.removeChild( this.sprite );
+    console.log("removing from scene");
   }
 
 });

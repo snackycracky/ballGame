@@ -49,7 +49,7 @@ exports.defineController = function(db, mongoose) {
         
         // Look for current user
         for ( i = 0; len = docs.length, i < docs.length; i++) {
-          docs[i] = docs[i].session
+          docs[i] = docs[i].session;
           if ( docs[i].userID === userID || docs[i].active === false) {
             docs.splice(i, 1);
             i--;
