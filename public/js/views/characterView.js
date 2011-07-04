@@ -2,6 +2,10 @@ Game.Views.Character = Game.Views.Player.extend({
 
   // Class variables
   nServerTick: (new Date).getTime(),
+  startVector: new THREE.Vector3(),
+  endVector: new THREE.Vector3(),
+  dirVector: new THREE.Vector3(),
+  goalVector: new THREE.Vector3(),
 
   initialize: function() {
     var 
@@ -30,18 +34,60 @@ Game.Views.Character = Game.Views.Player.extend({
 			camera = Game.Controllers.App.camera,
       moving = this.model.get("moving");
     
+    var posInd = this.goalVector.x / this.goalVector.z;
+    
     if ( Game.keyDict[37] ) {
       // Set direction left vector
-      this.model.set({dir: {x: -1, y: 0, z: 1}, moving: true });
+      if ( (this.goalVector.x < 0 && posInd < 1.0 && posInd > 0) || (this.goalVector.x > 0 && posInd > -1.0 && posInd < 0) ) { // quadrant 1
+        // up
+        this.model.set({dir: {x: -1, y: 0, z: -1}, moving: true });
+        
+      } else if ( (this.goalVector.x > 0 && posInd < -1.0 && posInd < 0) || (this.goalVector.x > 0 && posInd > 1.0 && posInd > 0) ) { // quadrant 2
+        // down
+        this.model.set({dir: {x: 1, y: 0, z: 1}, moving: true });
+      } else {
+        
+        this.model.set({dir: {x: this.goalVector.x, y: 0, z: this.goalVector.z}, moving: true });
+      }
+      
     } else if ( Game.keyDict[38] ) {
       // Set direction up vector
-      this.model.set({dir: {x: -1, y: 0, z: -1}, moving: true });
+      if ( (this.goalVector.x > 0 && posInd < 1.0 && posInd > 0) || (this.goalVector.x < 0 && posInd > -1.0 && posInd < 0) ) { // quadrant 3
+        // left
+        this.model.set({dir: {x: -1, y: 0, z: 1}, moving: true });
+        
+      } else if ( (this.goalVector.x > 0 && posInd < -1.0 && posInd < 0) || (this.goalVector.x > 0 && posInd > 1.0 && posInd > 0) ) { // quadrant 2
+        // right
+        this.model.set({dir: {x: 1, y: 0, z: -1}, moving: true });
+        
+      } else {
+        this.model.set({dir: {x: this.goalVector.x, y: 0, z: this.goalVector.z}, moving: true });
+      }
+      
     } else if ( Game.keyDict[39] ) {
       // Set direction right vector
-      this.model.set({dir: {x: 1, y: 0, z: -1}, moving: true });
+      if ( (this.goalVector.x < 0 && posInd < -1.0 && posInd < 0) || (this.goalVector.x < 0 && posInd > 1.0 && posInd > 0) ) { // quadrant 4
+        // up
+        this.model.set({dir: {x: -1, y: 0, z: -1}, moving: true });
+      } else if ( (this.goalVector.x > 0 && posInd < 1.0 && posInd > 0) || (this.goalVector.x < 0 && posInd > -1.0 && posInd < 0) ) { // qudrant 3
+        // down
+        this.model.set({dir: {x: 1, y: 0, z: 1}, moving: true });
+      } else {
+        this.model.set({dir: {x: this.goalVector.x, y: 0, z: this.goalVector.z}, moving: true });
+      }
+      
     } else if ( Game.keyDict[40] ) {
       // Set direction down vector
-      this.model.set({dir: {x: 1, y: 0, z: 1}, moving: true });
+      if ( (this.goalVector.x < 0 && posInd < -1.0 && posInd < 0) || (this.goalVector.x < 0 && posInd > 1.0 && posInd > 0) ) { // qudrant 4
+        // left
+        this.model.set({dir: {x: -1, y: 0, z: 1}, moving: true });
+      } else if ( (this.goalVector.x < 0 && posInd < 1.0 && posInd > 0) || (this.goalVector.x > 0 && posInd > -1.0 && posInd < 0) ) { // quadrant 1
+        // right
+        this.model.set({dir: {x: 1, y: 0, z: -1}, moving: true });
+      } else {
+        this.model.set({dir: {x: this.goalVector.x, y: 0, z: this.goalVector.z}, moving: true });
+      }
+      
     } else if ( moving ){
       // Stop moving
       this.model.set({moving: false});
@@ -72,39 +118,41 @@ Game.Views.Character = Game.Views.Player.extend({
 		translates x, y coordinates to world space and updates character
 	*/
 	moveCharacter: function(e) {
-  /*var
-			camera = Game.Controllers.App.camera,
-			projector = Game.Controllers.App.projector,
-			x, 
-			y,
-			t;
-		
-		// Convert screen coordinates to NDC coordinates -1.0 to 1.0
-		x = ( e.clientX / window.innerWidth ) * 2 - 1;
-		y = - ( e.clientY / window.innerHeight ) * 2 + 1;
-		
-		// Obtain one vector at click position for each side of the cube mapping
-		this.startVector.set( x, y, -1.0 );
-		this.endVector.set( x, y, 1.0 );
-	
-		// Convert coordinates back to world coordinates
-		this.startVector = projector.unprojectVector( this.startVector, camera );
-		this.endVector = projector.unprojectVector( this.endVector, camera );
-	
-		// Get direction from startVector to endVector
-		this.dirVector.sub( this.endVector, this.startVector );
-		this.dirVector.normalize();
-	
-		// Find intersection where y = 0
-		t = this.startVector.y / - ( this.dirVector.y );
-
-		// Start walking
-		this.goalVector.set( this.startVector.x + t * this.dirVector.x,
-		this.startVector.y + t * this.dirVector.y,
-		this.startVector.z + t * this.dirVector.z );
-			
-      this.isWalking = true;	*/
-	}
+    var
+  			camera = Game.Controllers.App.camera,
+  			projector = Game.Controllers.App.projector,
+  			x, 
+  			y,
+  			t;
+  		
+  		// Convert screen coordinates to NDC coordinates -1.0 to 1.0
+  		x = ( e.clientX / window.innerWidth ) * 2 - 1;
+  		y = - ( e.clientY / window.innerHeight ) * 2 + 1;
+  		
+  		// Obtain one vector at click position for each side of the cube mapping
+  		this.startVector.set( x, y, -1.0 );
+  		this.endVector.set( x, y, 1.0 );
+  	
+  		// Convert coordinates back to world coordinates
+  		this.startVector = projector.unprojectVector( this.startVector, camera );
+  		this.endVector = projector.unprojectVector( this.endVector, camera );
+  	
+  		// Get direction from startVector to endVector
+  		this.dirVector.sub( this.endVector, this.startVector );
+  		this.dirVector.normalize();
+  	
+  		// Find intersection where y = 0
+  		t = this.startVector.y / - ( this.dirVector.y );
+  
+  		// Start walking
+  		this.goalVector.set( this.startVector.x + t * this.dirVector.x,
+  		this.startVector.y + t * this.dirVector.y,
+  		this.startVector.z + t * this.dirVector.z );
+      
+      // Find vector from player to goal
+      this.goalVector.sub( this.goalVector, this.model.get("pos") );
+      this.goalVector.normalize();
+  }
 
 });
 

@@ -5,7 +5,8 @@ Game.Views.App = Backbone.View.extend({
 	events: {
 		"click": "clickWorld",
     "keydown": "keypressWorld",
-    "keyup": "keyupWorld"
+    "keyup": "keyupWorld",
+    "mousemove": "moveWorld"
 	},
 	
 	
@@ -73,12 +74,14 @@ Game.Views.App = Backbone.View.extend({
     
     // New player
     if ( player === undefined ) {
+      console.log("adding player");
       player = new Game.Models.Player(obj); 
       player.view = new Game.Views.Player({
         model: player
       });
       this.players.add(player);
     } else if ( obj.active === false ) {
+      console.log("removing player");
       player.view.removePlayer();
       this.players.remove(player);
     }
@@ -101,7 +104,7 @@ Game.Views.App = Backbone.View.extend({
 			mesh;
 
 		// Load texture
-		grass  = THREE.ImageUtils.loadTexture( "textures/grass.png" );
+		grass  = THREE.ImageUtils.loadTexture( "textures/grass.jpg" );
 		grass.wrapT = grass.wrapS = THREE.RepeatWrapping;
     
 		// Create plane
@@ -115,8 +118,8 @@ Game.Views.App = Backbone.View.extend({
 
 			for ( j = 0; j < uvs.length; j ++ ) {
 
-				uvs[ j ].u *= 32;
-				uvs[ j ].v *= 32;
+				uvs[ j ].u *= 16;
+				uvs[ j ].v *= 16;
 
 			}
 		}
@@ -188,6 +191,14 @@ Game.Views.App = Backbone.View.extend({
   */
   keyupWorld: function(e) {
     Game.keyDict[e.keyCode] = false;
+  },
+  
+  
+  /* 
+    function moveWorld
+  */
+	moveWorld: function(e) {
+    this.characterView.moveCharacter(e);
   }
-	
+  
 });

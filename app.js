@@ -87,7 +87,6 @@ socket.on('connection', function(client) {
   
   // Handle disconnects
   client.on('disconnect', function(){
-    
     // Update active status in db
     mongooseStoreInst.getCollection().findOne({ 'session.clientID': client.sessionId}, function(err, data) {
       if ( data !== undefined ) {

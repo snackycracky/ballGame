@@ -24,7 +24,7 @@ exports.defineController = function(db, mongoose) {
       if ( req.session.userID === undefined ) {
         req.session.pos = {
           x: 0,
-          y: 40,
+          y: 0,
           z: 0
         };
         req.session.dir = {
